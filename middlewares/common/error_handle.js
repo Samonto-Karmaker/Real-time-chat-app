@@ -7,9 +7,19 @@ const notFoundErrorHandler = (req, res, next) => {
 
 //Defult Error Handler
 const errorHandler = (err, req, res, next) =>{
-    res.render("error", {
-        "title": "error!"
-    })
+    res.locals.error = err
+    res.status = (err.status || 500)
+
+    if(res.locals.html){
+        //Send HTML response
+        res.render("error", {
+            "title" : "Error!!"
+        })
+    }
+    else{
+        //Send JSON response
+        res.json(res.locals.error)
+    }
 }
 
 module.exports = {
