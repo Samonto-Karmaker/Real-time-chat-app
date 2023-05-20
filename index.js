@@ -7,6 +7,9 @@ const cookieParser = require("cookie-parser")
 
 //Internal Imports
 const {notFoundErrorHandler, errorHandler} = require("./middlewares/common/error_handle")
+const logInRouter = require("./routes/logInRouter")
+const userRouter = require("./routes/userRouter")
+const inboxRouter = require("./routes/inboxRouter")
 
 //Initialization
 const app = express()
@@ -34,6 +37,9 @@ app.use(express.static(path.join(__dirname, "public")))
 app.use(cookieParser(process.env.COOKIE_SECRET))
 
 //Routing
+app.use("/", logInRouter)
+app.use("/users", userRouter)
+app.use("/inbox", inboxRouter)
 
 //Error Handling
 
