@@ -1,7 +1,5 @@
 const getInboxInfo = (req, res, next) => {
-    res.render("inbox", {
-        "title": "Inbox - Chat App"
-    })
+    res.render("inbox")
 }
 
 module.exports = {
