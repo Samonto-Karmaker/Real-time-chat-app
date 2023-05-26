@@ -5,6 +5,7 @@ const express = require("express")
 const {getUsers} = require("../controllers/userController")
 const addTitle2HTMLResponse = require("../middlewares/common/decorate_html_reponse")
 const avatarUploader = require("../middlewares/users/avatar_uploader")
+const { addUserValidators } = require("../middlewares/users/user_validator")
 
 //Initializing Router
 const router = express.Router()
@@ -13,6 +14,6 @@ const router = express.Router()
 router.get("/", addTitle2HTMLResponse("Users"), getUsers)
 
 //Add users
-router.post("/", avatarUploader)
+router.post("/", avatarUploader, addUserValidators)
 
 module.exports = router
