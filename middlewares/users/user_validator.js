@@ -7,6 +7,12 @@ const { unlink } = require("fs");
 //Internal Imports
 const actors = require("../../models/actors")
 
+/**
+ * Add user validator array. Here we used check from express-validator. This is like a rubric for adding user.
+ * To response to the error, we use a handler function which can handle the validation result.
+ * We used .custom to create a custom validator for emails and moblie numbers. 
+ * Here, the custom validator ensures that email and moblie are unique.
+ */
 const addUserValidators = [
     check("name")
         .isLength({min: 1})
@@ -48,13 +54,18 @@ const addUserValidators = [
         .withMessage("Password must be at least 8 characters long & should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol")    
 ]
 
+//This function is used to handle the validation result.
 const vaildationResultHandler = (req, res, next) => {
+    //Get the errors
     const errors = vaildationResult(req)
+    //Beautify the errors
     const mappedErrors = errors.mapped()
     if(Object.keys(mappedErrors).length === 0){
+        //No error found
         next()
     }
     else{
+        //Delect avatar if uploaded any
         if(req.files.length > 0){
             const {filename} = req.files[0]
             unlink(
@@ -65,10 +76,11 @@ const vaildationResultHandler = (req, res, next) => {
                     }
                 }
             )
-            res.status(500).json({
-                errors: mappedErrors
-            })
         }
+        //Send a json response
+        res.status(500).json({
+            errors: mappedErrors
+        })
     }
 }
 
