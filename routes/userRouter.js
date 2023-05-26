@@ -2,7 +2,7 @@
 const express = require("express")
 
 //Internal Imports
-const {getUsers} = require("../controllers/userController")
+const {getUsers, addUser} = require("../controllers/userController")
 const addTitle2HTMLResponse = require("../middlewares/common/decorate_html_reponse")
 const avatarUploader = require("../middlewares/users/avatar_uploader")
 const { addUserValidators, vaildationResultHandler } = require("../middlewares/users/user_validator")
@@ -14,6 +14,6 @@ const router = express.Router()
 router.get("/", addTitle2HTMLResponse("Users"), getUsers)
 
 //Add users
-router.post("/", avatarUploader, addUserValidators, vaildationResultHandler)
+router.post("/", avatarUploader, addUserValidators, vaildationResultHandler, addUser)
 
 module.exports = router
