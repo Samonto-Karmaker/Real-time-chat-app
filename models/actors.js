@@ -32,9 +32,9 @@ const actorSchema = mongoose.Schema(
             enum: ["admin", "user"],
             default: "user"
         },
-        record: {
-            timestamps: true
-        }
+    },
+    {
+        timestamps: true
     }
 )
 
