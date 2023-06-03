@@ -1,5 +1,5 @@
 //External Imports
-const {check, vaildationResult} = require("express-validator")
+const {check, validationResult} = require("express-validator")
 const createError = require("http-errors")
 const path = require("path");
 const { unlink } = require("fs");
@@ -35,14 +35,14 @@ const addUserValidators = [
                 throw createError(err.message)
             }
         }),
-    check("moblie")
+    check("mobile")
         .isMobilePhone("bn-BD", {strictMode: true})
-        .withMessage("MobileError: Moblie Number must be vaild & Bangladeshi")
+        .withMessage("MobileError: Mobile Number must be vaild & Bangladeshi")
         .custom(async (value) =>{
             try{
                 const actor = await actors.findOne({mobile: value})
                 if(actor){
-                    throw createError("EmailError: Email must be unique")
+                    throw createError("MobileError: Mobile Number must be unique")
                 }
             }
             catch(err){
@@ -55,11 +55,13 @@ const addUserValidators = [
 ]
 
 //This function is used to handle the validation result.
-const vaildationResultHandler = (req, res, next) => {
+const validationResultHandler = (req, res, next) => {
     //Get the errors
-    const errors = vaildationResult(req)
+    const errors = validationResult(req)
+    console.log(errors)
     //Beautify the errors
     const mappedErrors = errors.mapped()
+    console.log(mappedErrors)
     if(Object.keys(mappedErrors).length === 0){
         //No error found
         next()
@@ -69,7 +71,7 @@ const vaildationResultHandler = (req, res, next) => {
         if(req.files.length > 0){
             const {filename} = req.files[0]
             unlink(
-                path.join(__dirname, `/../public/uploads/avatars/${filename}`),
+                path.join(__dirname, `/../../public/uploads/avatars/${filename}`),
                 (err) => {
                     if(err){
                         console.log(err)
@@ -86,5 +88,5 @@ const vaildationResultHandler = (req, res, next) => {
 
 module.exports = {
     addUserValidators,
-    vaildationResultHandler
+    validationResultHandler
 }

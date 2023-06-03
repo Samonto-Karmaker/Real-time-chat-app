@@ -15,7 +15,7 @@ const actorSchema = mongoose.Schema(
             lowercase: true,
             trim: true
         },
-        moblie: {
+        mobile: {
             type: String,
             require: true,
             trim: true
