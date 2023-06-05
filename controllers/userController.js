@@ -4,9 +4,17 @@ const bcrypt = require("bcrypt")
 //Internal imports
 const actors = require("../models/actors")
 
-//Render users.ejs in frontend
-const getUsers = (req, res, next) => {
-    res.render("users")
+//Get user list from the datadase
+const getUsers = async (req, res, next) => {
+    try {
+        const users = await actors.find()
+        res.render("users", {
+            users: users
+        })
+    } 
+    catch (err) {
+        next(err)
+    }
 }
 
 //Add user
