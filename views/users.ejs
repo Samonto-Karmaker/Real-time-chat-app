@@ -60,6 +60,7 @@
         let response = await request.json()
         if(response.errors){
           alert("Could not delete the user!")
+          console.log(response.errors)
         }
         else{
           alert("User was deleted successfully!")

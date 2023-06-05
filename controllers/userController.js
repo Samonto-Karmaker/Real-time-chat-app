@@ -1,6 +1,6 @@
 //External imports
 const bcrypt = require("bcrypt")
-const unlink = require("fs")
+const {unlink} = require("fs")
 const path = require("path")
 
 //Internal imports
