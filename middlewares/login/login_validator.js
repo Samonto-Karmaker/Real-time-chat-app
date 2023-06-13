@@ -16,7 +16,7 @@ const validationResultHandler = (req, res, next) => {
         next()
     }
     else{
-        res.render("index", {
+        res.render("login", {
             data: {
                 username: req.body.username
             },
