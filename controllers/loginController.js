@@ -28,10 +28,12 @@ const login = async (req, res, next) => {
                 //prepare the user object to generate a jw token
                 //only provide public info as it is accessable
                 const userObject = {
+                    userid: user._id,
                     username: user.name,
                     email: user.email,
                     mobile: user.mobile,
-                    role: "user"
+                    avatar: user.avater || null,
+                    role: user.role || "user"
                 }
                 //Generate token
                 const token = jwt.sign(userObject, process.env.JWT_SECRET, {

@@ -64,7 +64,39 @@ const searchUser = async (req, res, next) => {
     }
 }
 
+//add conversation
+const addConversation = async (req, res, next) => {
+    try{
+        const newCon = new conversations({
+            creator: {
+                id: req.user.userid,
+                name: req.user.username,
+                avatar: req.user.avatar || null
+            },
+            participant: {
+                id: req.body.participant,
+                name: req.body.participant,
+                avatar: req.body.avatar || null
+            }
+        })
+        const result = await newCon.save()
+        res.status(200).json({
+            message: "A new conversation was added successfully"
+        })
+    }
+    catch(err){
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: err.message
+                }
+            }
+        })
+    }
+}
+
 module.exports = {
     getInboxInfo,
-    searchUser
+    searchUser,
+    addConversation
 }
