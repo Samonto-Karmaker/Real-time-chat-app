@@ -2,7 +2,7 @@
 const express = require("express")
 
 //Internal Imports
-const {getInboxInfo, searchUser, addConversation} = require("../controllers/inboxController")
+const {getInboxInfo, searchUser, addConversation, getMessage} = require("../controllers/inboxController")
 const addTitle2HTMLResponse = require("../middlewares/common/decorate_html_reponse")
 const { checkLogin } = require("../middlewares/common/protectPages")
 
@@ -17,5 +17,8 @@ router.post("/search", checkLogin, searchUser)
 
 //Add conversation
 router.post("/add_conversation", checkLogin, addConversation)
+
+//Get messages
+router.get("/messages/:conversation_id", checkLogin, getMessage)
 
 module.exports = router

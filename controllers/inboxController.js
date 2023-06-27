@@ -4,6 +4,7 @@ const createError = require("http-errors")
 //Internal imports
 const conversations = require("../models/conversations")
 const actors = require("../models/actors")
+const messages = require("../models/messages")
 const escape = require("../utilities/escape")
 
 //get indox page
@@ -95,8 +96,40 @@ const addConversation = async (req, res, next) => {
     }
 }
 
+//Get messages
+const getMessage = async (req, res, next) => {
+    try{
+        const message = await messages.find({
+            converation_id: req.params.converation_id
+        }).sort("-createdAt")
+
+        const {participant} = await conversations.findById(
+            req.params.converation_id
+        )
+
+        res.status(200).json({
+            data: {
+                messages: message,
+                participant: participant
+            },
+            user: req.user.userid,
+            converation_id: req.params.converation_id
+        })
+    }
+    catch(err){
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: err.message
+                }
+            }
+        })
+    }
+}
+
 module.exports = {
     getInboxInfo,
     searchUser,
-    addConversation
+    addConversation,
+    getMessage
 }
