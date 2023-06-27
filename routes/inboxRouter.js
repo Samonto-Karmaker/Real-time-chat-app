@@ -5,6 +5,7 @@ const express = require("express")
 const {getInboxInfo, searchUser, addConversation, getMessage} = require("../controllers/inboxController")
 const addTitle2HTMLResponse = require("../middlewares/common/decorate_html_reponse")
 const { checkLogin } = require("../middlewares/common/protectPages")
+const attachmentUploader = require("../middlewares/inbox/attachment_uploader")
 
 //Initializing Router
 const router = express.Router()
@@ -20,5 +21,8 @@ router.post("/add_conversation", checkLogin, addConversation)
 
 //Get messages
 router.get("/messages/:conversation_id", checkLogin, getMessage)
+
+//Send message
+router.post("/message", checkLogin, attachmentUploader)
 
 module.exports = router

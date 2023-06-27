@@ -1,5 +1,5 @@
 //Internal Imports
-const singleFileUploader = require("../../utilities/fileUploader")
+const {singleFileUploader} = require("../../utilities/fileUploader")
 
 const avatarUploader = (req, res, next) => {
     //get the upload multer object
