@@ -4,6 +4,8 @@ const dotenv = require("dotenv")
 const mongoose = require("mongoose")
 const path = require("path")
 const cookieParser = require("cookie-parser")
+const http = require("http")
+const moment = require("moment")
 
 //Internal Imports
 const {notFoundErrorHandler, errorHandler} = require("./middlewares/common/error_handle")
@@ -13,7 +15,15 @@ const inboxRouter = require("./routes/inboxRouter")
 
 //Initialization
 const app = express()
+const server = http.createServer(app) // Only for websocket config
 dotenv.config()
+
+//socket create
+const io = require("socket.io")(server)
+global.io = io
+
+//set "moment" in app locals
+app.locals.moment = moment
 
 //Database connection
 mongoose.connect(process.env.DATABASE_CONNECTION_STRING, {

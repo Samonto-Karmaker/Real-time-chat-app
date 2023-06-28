@@ -100,11 +100,11 @@ const addConversation = async (req, res, next) => {
 const getMessage = async (req, res, next) => {
     try{
         const message = await messages.find({
-            converation_id: req.params.converation_id
+            conversation_id: req.params.conversation_id
         }).sort("-createdAt")
 
         const {participant} = await conversations.findById(
-            req.params.converation_id
+            req.params.conversation_id
         )
 
         res.status(200).json({
@@ -113,7 +113,7 @@ const getMessage = async (req, res, next) => {
                 participant: participant
             },
             user: req.user.userid,
-            converation_id: req.params.converation_id
+            conversation_id: req.params.conversation_id
         })
     }
     catch(err){
@@ -127,9 +127,74 @@ const getMessage = async (req, res, next) => {
     }
 }
 
+//send message
+const sendMessage = async (req, res, next) => {
+    if(req.body.message || (req.files && req.files.length > 0)){
+        //If a message or attachments are there to send
+        try{
+            //prepare attachment to save in database if any
+            let attachments = null
+            if(req.files && req.files.length > 0){
+                attachments = []
+                req.files.forEach(file => {
+                    attachments.push(file.filename)
+                });
+            }
+
+            //save messages & attachments in database
+            const newMessage = new messages({
+                text: req.body.message,
+                attachment: attachments,
+                sender: {
+                    id: req.user.userid,
+                    name: req.user.username,
+                    avatar: req.user.avatar || null
+                },
+                receiver: {
+                    id: req.body.receiverId,
+                    name: req.body.receiverName,
+                    avatar: req.body.avatar || null
+                },
+                conversation_id: req.body.conversationId
+            })
+            const result = await newMessage.save()
+
+            //Emit socket event: sending the data to frontend in realtime
+            global.io.emit("new_message", {
+                data: {
+                    conversation_id: req.body.conversationId,
+                    sender: {
+                        id: req.user.userid,
+                        name: req.user.username,
+                        avatar: req.user.avatar || null
+                    },
+                    message: req.body.message,
+                    attachment: attachments,
+                    data_time: result.data_time
+                }
+            })
+
+            res.status(200).json({
+                message: "Message is sent successfully",
+                data: result
+            })
+        }
+        catch(err){
+            res.status(500).json({
+                errors: {
+                    common: {
+                        msg: "Message is not sent properly"
+                    }
+                }
+            })
+        }
+    }
+}
+
 module.exports = {
     getInboxInfo,
     searchUser,
     addConversation,
-    getMessage
+    getMessage, 
+    sendMessage
 }
