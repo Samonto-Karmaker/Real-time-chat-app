@@ -62,7 +62,7 @@ const multiFileUploader = (floderName, fileType, maxSize, fileNum, err) => {
         filename: (req, file, cb) => {
             const ext = path.extname(file.originalname)
             const name = 
-                file.origialname
+                file.originalname
                     .replace(ext, "")
                     .toLowerCase()
                     .split(" ")

@@ -9,12 +9,11 @@ const attachmentUploader = (req, res, next) => {
         3,
         "Only .jpg or .jpeg or png format supported"
     )
-
-    upload.any()(req, res, (err) => {
+    uploader.any()(req, res, (err) => {
         if(err){
             res.status(500).json({
                 errors:{
-                    attachment:{
+                    common:{
                         msg: err.message
                     }
                 }

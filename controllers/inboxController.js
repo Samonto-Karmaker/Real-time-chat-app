@@ -75,7 +75,7 @@ const addConversation = async (req, res, next) => {
                 avatar: req.user.avatar || null
             },
             participant: {
-                id: req.body.participant,
+                id: req.body.id,
                 name: req.body.participant,
                 avatar: req.body.avatar || null
             }
@@ -103,14 +103,15 @@ const getMessage = async (req, res, next) => {
             conversation_id: req.params.conversation_id
         }).sort("-createdAt")
 
-        const {participant} = await conversations.findById(
+        const {creator, participant} = await conversations.findById(
             req.params.conversation_id
         )
 
         res.status(200).json({
             data: {
                 messages: message,
-                participant: participant
+                participant,
+                creator
             },
             user: req.user.userid,
             conversation_id: req.params.conversation_id
@@ -161,7 +162,7 @@ const sendMessage = async (req, res, next) => {
 
             //Emit socket event: sending the data to frontend in realtime
             global.io.emit("new_message", {
-                data: {
+                message: {
                     conversation_id: req.body.conversationId,
                     sender: {
                         id: req.user.userid,

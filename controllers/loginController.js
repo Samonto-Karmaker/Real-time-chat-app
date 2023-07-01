@@ -32,7 +32,7 @@ const login = async (req, res, next) => {
                     username: user.name,
                     email: user.email,
                     mobile: user.mobile,
-                    avatar: user.avater || null,
+                    avatar: user.avatar || null,
                     role: user.role || "user"
                 }
                 //Generate token
@@ -47,7 +47,7 @@ const login = async (req, res, next) => {
                 })
                 //Set logged in user local identifier
                 res.locals.loggedInUser = userObject
-                res.render("inbox")
+                res.redirect("inbox")
             }
             else{
                 throw createError("LogInError: Invalid password")

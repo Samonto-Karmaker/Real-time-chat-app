@@ -4,7 +4,6 @@ const dotenv = require("dotenv")
 const mongoose = require("mongoose")
 const path = require("path")
 const cookieParser = require("cookie-parser")
-const http = require("http")
 const moment = require("moment")
 
 //Internal Imports
@@ -15,12 +14,7 @@ const inboxRouter = require("./routes/inboxRouter")
 
 //Initialization
 const app = express()
-const server = http.createServer(app) // Only for websocket config
 dotenv.config()
-
-//socket create
-const io = require("socket.io")(server)
-global.io = io
 
 //set "moment" in app locals
 app.locals.moment = moment
@@ -60,6 +54,10 @@ app.use(notFoundErrorHandler)
 app.use(errorHandler)
 
 //Listening
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
     console.log(`App is listening to port ${process.env.PORT}`)
 })
+
+//socket create
+const io = require("socket.io")(server)
+global.io = io

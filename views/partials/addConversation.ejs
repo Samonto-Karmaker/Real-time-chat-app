@@ -1,0 +1,140 @@
+<div class="modal-wrapper" id="add-conversation-modal">
+    <div class="modal">
+        <a href="#" onClick="closeModal()" class="modal-close">+</a>
+        <div class="modal-title">
+            <h2>Create New Conversation</h2>
+        </div>
+        <div class="modal-body">
+            <form>
+                <input
+                    type="text",
+                    placeholder="search by name or email or mobile no."
+                    name="user"
+                    id="user"
+                    autocomplete="off"
+                />
+                <p class="error"></p>
+                <div class="search_users"></div>
+                <input type="submit" value="Submit" class="hide" />
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+
+    //capture the entire modal
+    const modal = document.querySelector("#add-conversation-modal")
+
+    //typing dectector variables
+    let typingTimer
+    const doneTypingInterval = 500
+    const input = document.querySelector("#user")
+    const conversation_list = document.querySelector("#conversation-list")
+    let user_placeholder = document.querySelector(".search_users")
+
+    const closeModal = () => {
+        modal.style.display = "none"
+        
+        //reset
+        user_placeholder.style.display = "none"
+        input.value = ""
+    }
+
+    const openModal = () => {
+        console.log("open modal")
+        modal.style.display = "block"
+    }
+
+    //on keyup, start the conuntdown
+    input.addEventListener("keyup", () => {
+        clearTimeout(typingTimer)
+
+        //reset
+        user_placeholder.style.display = "none"
+        if(input.value){
+            typingTimer = setTimeout(searchUsers, doneTypingInterval)
+        }
+    })
+
+    //on keydown, stop the conuntdown
+    input.addEventListener("keydown", () => {
+        clearTimeout(typingTimer)
+    })
+
+    //send request to search
+    const searchUsers = async () => {
+        let request = await fetch("/inbox/search", {
+            method: "POST",
+            body: JSON.stringify({
+                user: input.value
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+
+        //get response
+        let response = await request.json()
+
+        if(response.errors){
+            const errorPlaceHolder = document.querySelector("p.error")
+            errorPlaceHolder.textContent = response.errors.common.msg
+            errorPlaceHolder.style.display = "block"
+        }
+        else{
+            if(response.length > 0){
+                let geneatedHTML = "<ul>"
+                response.forEach(user => {
+                    const avatar = user.avatar ? "./uploads/avatars/" + user.avatar : "./images/nophoto.png"
+                    geneatedHTML += 
+                    `<li onclick="createConversation('${user._id}', '${user.name}', '${user.avatar}')">
+                        <div class="user">
+                            <div class="avatar">
+                                <img src="${avatar} />
+                            </div>
+                            <div class="username">${user.name}</div>
+                        </div>
+                    </li>`
+                })
+                geneatedHTML += "</ul>"
+                user_placeholder.innerHTML = geneatedHTML
+                user_placeholder.style.display = "block"
+            }
+        }
+    }
+
+    //create conversation
+    const createConversation = async (participant_id, name, avatar) => {
+        try{
+            const request = await fetch("/inbox/add_conversation", {
+                method: "POST",
+                body: JSON.stringify({
+                    participant: name,
+                    id: participant_id,
+                    avatar: avatar != "undefined" ? avatar : null
+                }),
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            })
+            const response = await request.json()
+            if(!response.errors){
+                //reset
+                user_placeholder.style.display = "none"
+                input.value = name
+
+                //reload after 1 second
+                setTimeout(() => {
+                    location.reload()
+                }, 1000)
+            }
+            else{
+                throw new Error(response.errors.common.msg)
+            }
+        }
+        catch(error){
+            alert("Error while creating a conversation")
+        }
+    }
+
+</script>
