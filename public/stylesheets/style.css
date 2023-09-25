@@ -607,6 +607,12 @@ input[type="submit"]:active {
   color: var(--light);
 }
 
+#sign-up-msg h5 {
+  color: var(--light);
+  font-size: medium; 
+  font-family: monospace;
+}
+
 #branding img {
   width: 100px;
 }

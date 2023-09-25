@@ -9,7 +9,7 @@ const logInValidators = [
         .withMessage("Password is required")
 ]
 
-const validationResultHandler = (req, res, next) => {
+const loginValidationResultHandler = (req, res, next) => {
     const errors = validationResult(req)
     const mappedErrors = errors.mapped()
     if(Object.keys(mappedErrors).length === 0){
@@ -27,5 +27,5 @@ const validationResultHandler = (req, res, next) => {
 
 module.exports = {
     logInValidators,
-    validationResultHandler
+    loginValidationResultHandler
 }

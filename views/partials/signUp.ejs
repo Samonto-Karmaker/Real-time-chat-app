@@ -1,0 +1,111 @@
+<div class="modal-wrapper" id="signup-modal">
+    <div class="modal">
+        <a href="#" onclick="closeModal()" class="modal-close">+</a>
+        <div class="modal-title">
+            <h2>Sign Up</h2>
+        </div>
+        <div class="modal-body">
+            <form
+                method="post"
+                action="/signup"
+                enctype="multipart/form-data"
+                id="signup-form"
+            >
+                <input type="text" placeholder="enter name" name="name" />
+                <p class="error name-error"></p>
+
+                <input type="text" placeholder="enter email" name="email" />
+                <p class="error email-error"></p>
+
+                <input type="text" placeholder="enter mobile" name="mobile" />
+                <p class="error mobile-error"></p>
+
+                <input type="password" placeholder="enter password" name="password" />
+                <p class="error password-error"></p>
+
+                <input type="file" name="avatar" />
+                <p class="error avatar-error"></p>
+
+                <p class="error common-error"></p>
+
+                <input type="submit" value="Sign Up" />
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const modal = document.querySelector("#signup-modal")
+    const form = document.querySelector("#signup-form")
+
+    function closeModal() {
+        modal.style.display = "none"
+    }
+    function openModal() {
+        modal.style.display = "block"
+    }
+    //form submit handler
+    form.onsubmit = async event => {
+        console.log("Submission starts")
+        event.preventDefault()
+
+        //clear previous errors
+        //clear error msg
+        const errorPlaceholders = document.querySelectorAll("p.error")
+        console.log(errorPlaceholders)
+        for(let i = 0; i < errorPlaceholders.length; i++){
+            console.log(errorPlaceholders[i])
+            errorPlaceholders[i].style.display = "none"
+        }
+
+        //clear error styling
+        const inputPlaceholders = document.querySelectorAll("input.error")
+        console.log(inputPlaceholders)
+        for(let i = 0; i < inputPlaceholders.length; i++){
+            console.log(inputPlaceholders[i])
+            inputPlaceholders[i].classList.remove("error")
+        }
+
+        //Preparing the form data
+        const formData = new FormData(form)
+        console.log(formData)
+
+        //Send post request to backend
+        let request = await fetch("/signup", { 
+            method: "POST",
+            body: formData
+        })
+
+        //Get response from backend
+        let response = await request.json()
+        console.log(response)
+        //Handle response
+        if(response.errors){
+            console.log("Error!!")
+            //errors
+            Object.keys(response.errors).forEach(fieldName => {
+                //add error styling
+                form[fieldName].classList.add("error")
+
+                //set error msg
+                const errorPlaceholder = document.querySelector(`.${fieldName}-error`)
+                errorPlaceholder.textContent = response.errors[fieldName].msg
+
+                //make the placeholder visible
+                errorPlaceholder.style.display = "block"
+            })
+        }
+        else{
+            //Success
+            console.log("Success!!")
+            alert("You have signed up successfully! Please login to continue.")
+            closeModal()
+            document.querySelector("p.error").style.display = "none"
+
+            //Reload the page 
+            setTimeout(() => {
+                location.reload()
+            }, 1000)
+        }
+    }
+
+</script>

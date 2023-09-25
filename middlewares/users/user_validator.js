@@ -55,7 +55,7 @@ const addUserValidators = [
 ]
 
 //This function is used to handle the validation result.
-const validationResultHandler = (req, res, next) => {
+const userValidationResultHandler = (req, res, next) => {
     //Get the errors
     const errors = validationResult(req)
     console.log(errors)
@@ -88,5 +88,5 @@ const validationResultHandler = (req, res, next) => {
 
 module.exports = {
     addUserValidators,
-    validationResultHandler
+    userValidationResultHandler
 }

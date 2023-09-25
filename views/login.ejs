@@ -13,7 +13,7 @@
         <img src="./images/logo.png" />
         <h1>Login - Chat Application</h1>
       </div>
-      <div id="login-form">
+      <div id="login-form" style="text-align: center;">
         <form method="post" action="/">
           <input 
             type="text" 
@@ -33,8 +33,13 @@
           <% } %>
           <input type="submit" value="Login" />
         </form>
+        <div id="sign-up-msg">
+          <h5>Don't have an account?</h5>
+        </div>
+        <input type="submit" value="Sign Up" style="margin-top: 5px;" onclick="openModal()" />
       </div>
     </div>
+    <%- include('./partials/signUp.ejs'); %>
   </body>
 
 </html>
