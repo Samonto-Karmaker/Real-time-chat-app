@@ -7,7 +7,7 @@ const actors = require("../models/actors")
 const messages = require("../models/messages")
 const escape = require("../utilities/escape")
 
-//get indox page
+//get inbox page
 const getInboxInfo = async (req, res, next) => {
     try{
         //trying to get conversations if exists
@@ -29,7 +29,7 @@ const getInboxInfo = async (req, res, next) => {
 const searchUser = async (req, res, next) => {
     //get the query
     const user = req.body.user
-    //+88 is not required whlie searching
+    //+88 is not required while searching
     const searchQuery = user.replace("+88", "")
 
     //search regex
@@ -192,10 +192,31 @@ const sendMessage = async (req, res, next) => {
     }
 }
 
+//delete message
+const deleteConversation = async (req, res, next) => {
+    try{
+        const result = await conversations.findByIdAndDelete(req.params.conversation_id)
+        global.io.emit("delete_conversation", req.params.conversation_id)
+        res.status(200).json({
+            message: "Conversation is deleted successfully"
+        })
+    }
+    catch(err){
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: "Conversation is not deleted properly"
+                }
+            }
+        })
+    }
+}
+
 module.exports = {
     getInboxInfo,
     searchUser,
     addConversation,
     getMessage, 
-    sendMessage
+    sendMessage,
+    deleteConversation
 }
