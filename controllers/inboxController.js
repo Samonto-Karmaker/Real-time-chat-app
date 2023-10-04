@@ -44,7 +44,7 @@ const searchUser = async (req, res, next) => {
             const user = await actors.find({
                 $or: [
                     {name: name_search_regex},
-                    {moblie: mobile_search_regex},
+                    {mobile: mobile_search_regex},
                     {email: email_search_regex}
                 ]
             }, "name avatar")
