@@ -212,11 +212,66 @@ const deleteConversation = async (req, res, next) => {
     }
 }
 
+// Search Conversation
+const searchConversation = async (req, res, next) => {
+    //get the query
+    const searchQuery = req.body.user
+    //search regex
+    //conversations can be searched by the other person's name only.
+    const name_search_regex = new RegExp(escape(searchQuery), "i")
+
+    try{
+        if(searchQuery !== ""){
+            //Query to get the name and avatar of the user
+            const user = await actors.find({
+                $or: [
+                    {name: name_search_regex},
+                ]
+            }, "_id name avatar")
+            if(user && user.length > 0){
+                //Query to get the conversations
+                const searchedConversations = await conversations.findAll({
+                    $and: [
+                        {
+                        $or: [
+                            { "creator.id": req.user.userid },
+                            { "participant.id": req.user.userid }
+                        ]},
+                        {
+                        $or: [
+                            { "creator.id": user._id },
+                            { "participant.id": user._id }
+                        ]}
+                    ]
+                })
+                res.locals.data = searchedConversations
+            }
+            else{
+                res.locals.data = []
+            }
+            res.render("inbox")
+        }
+        else{
+            throw createError("Search bar is empty!")
+        }
+    }
+    catch(err){
+        res.status(500).json({
+            errors: {
+                common: {
+                    msg: err.message
+                }
+            }
+        })
+    }
+}
+
 module.exports = {
     getInboxInfo,
     searchUser,
     addConversation,
     getMessage, 
     sendMessage,
-    deleteConversation
+    deleteConversation,
+    searchConversation
 }
