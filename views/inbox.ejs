@@ -7,9 +7,7 @@
   <body>
     <%- include('./partials/header.ejs'); %>
     <div id="chat-container">
-      <div id="search-container">
-        <input type="text" placeholder="Search" />
-      </div>
+      <%- include('./partials/searchConversation.ejs'); %>
       <div id="conversation-list">
         <% data.forEach(conversation=> { %>
         <!-- conversation creator is same to logged in user, so we need to show participant name and avatar -->
