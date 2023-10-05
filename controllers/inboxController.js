@@ -227,23 +227,21 @@ const searchConversation = async (req, res, next) => {
                 $or: [
                     {name: name_search_regex},
                 ]
-            }, "_id name avatar")
+            }, "_id")
             if(user && user.length > 0){
-                //Query to get the conversations
-                const searchedConversations = await conversations.findAll({
-                    $and: [
-                        {
+                //Query to get all the conversations
+                const searchedConversations = []
+                for(let i=0; i<user.length; i++){
+                    const conversation = await conversations.find({
                         $or: [
-                            { "creator.id": req.user.userid },
-                            { "participant.id": req.user.userid }
-                        ]},
-                        {
-                        $or: [
-                            { "creator.id": user._id },
-                            { "participant.id": user._id }
-                        ]}
-                    ]
-                })
+                            {"creator.id": req.user.userid, "participant.id": user[i]._id},
+                            {"creator.id": user[i]._id, "participant.id": req.user.userid}
+                        ]
+                    })
+                    if(conversation && conversation.length > 0){
+                        searchedConversations.push(...conversation)
+                    }
+                }
                 res.locals.data = searchedConversations
             }
             else{
