@@ -2,7 +2,16 @@
 const express = require("express")
 
 //Internal Imports
-const {getInboxInfo, searchUser, addConversation, getMessage, sendMessage, deleteConversation} = require("../controllers/inboxController")
+const {
+    getInboxInfo, 
+    searchUser, 
+    addConversation, 
+    getMessage, 
+    sendMessage, 
+    deleteConversation,
+    searchConversation
+} = require("../controllers/inboxController")
+
 const addTitle2HTMLResponse = require("../middlewares/common/decorate_html_reponse")
 const { checkLogin } = require("../middlewares/common/protectPages")
 const attachmentUploader = require("../middlewares/inbox/attachment_uploader")
@@ -27,5 +36,8 @@ router.post("/message", checkLogin, attachmentUploader, sendMessage)
 
 //Delete conversation
 router.delete("/conversation/:conversation_id", checkLogin, deleteConversation)
+
+//Search conversation
+router.post("/search_conversation", checkLogin, searchConversation)
 
 module.exports = router
