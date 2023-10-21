@@ -242,15 +242,24 @@ const searchConversation = async (req, res, next) => {
                         searchedConversations.push(...conversation)
                     }
                 }
-                res.locals.data = searchedConversations
+                res.status(200).json({
+                    data: searchedConversations,
+                    loggedInUserId: req.user.userid
+                })
             }
             else{
-                res.locals.data = []
+                res.status(200).json({
+                    data: [],
+                    loggedInUserId: req.user.userid
+                })
             }
-            res.render("inbox")
         }
         else{
-            throw createError("Search bar is empty!")
+            res.status(404).json({
+                errors: {
+                    msg: "Search bar is empty!"
+                }
+            })
         }
     }
     catch(err){
